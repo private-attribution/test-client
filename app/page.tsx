@@ -33,16 +33,28 @@ export default function Home() {
 
   const handleClick = () => {
     const conversionValue = 1;
-    try {
-      // For Android
-      IPAExperiment.createAndSubmitConversionReport(conversionValue);
-      cycleText(android);
-    } catch (error) {
+    if (
+      typeof IPAExperiment !== "undefined" &&
+      IPAExperiment.createAndSubmitConversionReport
+    ) {
+      // Check if the function exists on IPAExperiment
+      // this should work on Android
       try {
-        // For iOS
+        IPAExperiment.createAndSubmitConversionReport(conversionValue);
+        cycleText(android);
+      } catch (error) {
+        console.error(error);
+      }
+    } else if (typeof window.createAndSubmitConversionReport === "function") {
+      // Alternatively, check if the function exists on window
+      // this should work in iOS
+      try {
         window.createAndSubmitConversionReport(conversionValue);
         cycleText(apple);
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
       cycleText(sadFace);
     }
   };
