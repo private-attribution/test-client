@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const sadFace = "\u{1f62d}";
@@ -30,12 +30,22 @@ export default function Home() {
     upsideDownSmily,
   ];
   const [text, setText] = useState<string>(texts[0]);
+  useEffect(() => {
+    if (
+      typeof IPAExperiment !== "undefined" &&
+      typeof IPAExperiment.createAndSubmitConversionReport === "function"
+    ) {
+      setText(android);
+    } else if (typeof window.createAndSubmitConversionReport === "function") {
+      setText(apple);
+    }
+  }, []);
 
   const handleClick = () => {
     const conversionValue = 1;
     if (
       typeof IPAExperiment !== "undefined" &&
-      IPAExperiment.createAndSubmitConversionReport
+      typeof IPAExperiment.createAndSubmitConversionReport === "function"
     ) {
       // Check if the function exists on IPAExperiment
       // this should work on Android
