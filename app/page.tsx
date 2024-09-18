@@ -30,6 +30,7 @@ export default function Home() {
     upsideDownSmily,
   ];
   const [text, setText] = useState<string>(texts[0]);
+
   useEffect(() => {
     if (
       typeof IPAExperiment !== "undefined" &&
@@ -41,9 +42,19 @@ export default function Home() {
     }
   }, []);
 
+  const [apiCalls, setApiCalls] = useState<number>(0);
+  useEffect(() => {
+    setApiCalls(Number(sessionStorage.getItem("apiCalls")));
+  }, []);
+
   const handleClick = () => {
     const conversionValue = 1;
-    if (
+    setApiCalls(apiCalls + 1);
+    sessionStorage.setItem("apiCalls", apiCalls.toString());
+    if (apiCalls > 16) {
+      console.warn("too many api calls");
+      cycleText(upsideDownSmily);
+    } else if (
       typeof IPAExperiment !== "undefined" &&
       typeof IPAExperiment.createAndSubmitConversionReport === "function"
     ) {
